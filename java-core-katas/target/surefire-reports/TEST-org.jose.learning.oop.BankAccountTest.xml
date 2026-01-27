@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.jose.learning.oop.MoneyTest" time="0.051" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.jose.learning.oop.BankAccountTest" time="0.015" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -53,8 +53,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="shouldAddSameCurrency" classname="org.jose.learning.oop.MoneyTest" time="0.022"/>
-  <testcase name="shouldCreateMoney" classname="org.jose.learning.oop.MoneyTest" time="0.001"/>
-  <testcase name="shouldRejectDifferentCurrencyAddition" classname="org.jose.learning.oop.MoneyTest" time="0.002"/>
-  <testcase name="shouldRejectBlankCurrency" classname="org.jose.learning.oop.MoneyTest" time="0.001"/>
+  <testcase name="shouldRejectNonPositiveWithdraw" classname="org.jose.learning.oop.BankAccountTest" time="0.002"/>
+  <testcase name="shouldRejectWithdrawWhenInsufficientFunds" classname="org.jose.learning.oop.BankAccountTest" time="0.001"/>
+  <testcase name="shouldRejectBlankIban" classname="org.jose.learning.oop.BankAccountTest" time="0.001"/>
+  <testcase name="shouldDepositAndIncreaseBalance" classname="org.jose.learning.oop.BankAccountTest" time="0.001"/>
+  <testcase name="shouldWithdrawAndDecreaseBalance" classname="org.jose.learning.oop.BankAccountTest" time="0.001"/>
+  <testcase name="shouldRejectNonPositiveDeposit" classname="org.jose.learning.oop.BankAccountTest" time="0.002"/>
+  <testcase name="shouldCreateAccountWithZeroBalance" classname="org.jose.learning.oop.BankAccountTest" time="0.001"/>
 </testsuite>
