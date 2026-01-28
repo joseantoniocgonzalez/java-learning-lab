@@ -41,8 +41,9 @@ class HelloControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenNameBlank() throws Exception {
+    void shouldReturnBadRequestWithJsonWhenNameBlank() throws Exception {
         mockMvc.perform(get("/api/hello").param("name", ""))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("name must not be blank"));
     }
 }
