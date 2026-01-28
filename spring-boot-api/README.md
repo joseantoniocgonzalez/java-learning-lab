@@ -15,30 +15,36 @@ Minimal Spring Boot REST API module for learning purposes.
 - Maven
 
 ## Run tests
-```bash
-mvn test
-Run the application
-mvn spring-boot:run
-Base URL: http://localhost:8080
 
-Endpoints
-GET /api/hello
+    mvn test
+
+## Run the application
+
+    mvn spring-boot:run
+
+Base URL: `http://localhost:8080`
+
+## Endpoints
+
+### GET /api/hello
 Response:
 
-{ "message": "Hello from Spring Boot" }
-GET /api/hello?name=Jose
+    {"message":"Hello from Spring Boot"}
+
+### GET /api/hello?name=Jose
 Response:
 
-{ "message": "Hello, Jose" }
-GET /api/hello?name=
+    {"message":"Hello, Jose"}
+
+### GET /api/hello?name=
 Response:
+- Status: `400 Bad Request`
+- Body:
 
-Status: 400 Bad Request
+    {"error":"name must not be blank"}
 
-Body:
+## cURL examples
 
-{ "error": "name must not be blank" }
-cURL examples
-curl "http://localhost:8080/api/hello"
-curl "http://localhost:8080/api/hello?name=Jose"
-curl "http://localhost:8080/api/hello?name="
+    curl "http://localhost:8080/api/hello"
+    curl "http://localhost:8080/api/hello?name=Jose"
+    curl "http://localhost:8080/api/hello?name="
