@@ -1,6 +1,6 @@
 # java-learning-lab
 
-**java-learning-lab** is a structured Java learning and practice repository focused on **backend-oriented skills** and **software quality**.  
+**java-learning-lab** is a structured Java learning and practice repository focused on **backend-oriented skills** and **software quality**.
 Work is organized by topic and validated through **automated tests (JUnit)**, reinforcing clean code habits, refactoring, and solid **object-oriented design**.
 
 This repository includes:
@@ -8,10 +8,10 @@ This repository includes:
 - A **Spring Boot REST API module** with **JSON responses**, **basic input validation**, and **MVC/unit tests**
 
 ## Goals
-- Build strong Java fundamentals (**OOP**, collections, exceptions, best practices).
-- Practice a **test-first mindset** and basic **TDD** through katas and small exercises.
-- Maintain a **portfolio-ready** codebase for technical interviews and backend work.
-- Develop a **Spring Boot REST API** with automated tests and simple validation.
+- Build strong Java fundamentals (OOP, collections, exceptions, best practices).
+- Practice a test-first mindset and basic TDD through katas and small exercises.
+- Maintain a portfolio-ready codebase for technical interviews and backend work.
+- Develop a Spring Boot REST API with automated tests and simple validation.
 
 ## Structure
 - `java-core-katas/` — topic-based exercises validated with JUnit (OOP, collections, exceptions, etc.).
@@ -22,34 +22,36 @@ This repository includes:
 
 ### Run tests
 From repository root:
-```bash
-mvn -f java-core-katas/pom.xml test
-mvn -f spring-boot-api/pom.xml test
 
-eof
-cd spring-boot-api
-mvn spring-boot:run
+    mvn -f java-core-katas/pom.xml test
+    mvn -f spring-boot-api/pom.xml test
 
-Spring Boot API module
+### Run Spring Boot API
 
-Base URL: http://localhost:8080
+    cd spring-boot-api
+    mvn spring-boot:run
 
-Endpoints
+## Spring Boot API module
 
-GET /api/hello
-Response: {"message":"Hello from Spring Boot"}
+Base URL: `http://localhost:8080`
 
-GET /api/hello?name=Jose
-Response: {"message":"Hello, Jose"}
+### Endpoints
 
-GET /api/hello?name=
-Response: 400 Bad Request
-Body: {"error":"name must not be blank"}
-cURL examples
-curl "http://localhost:8080/api/hello"
-curl "http://localhost:8080/api/hello?name=Jose"
-curl "http://localhost:8080/api/hello?name="
+- `GET /api/hello`
+  Response: `{"message":"Hello from Spring Boot"}`
 
-Notes
+- `GET /api/hello?name=Jose`
+  Response: `{"message":"Hello, Jose"}`
 
-The repository is designed to be incremental: small steps, frequent commits, continuous improvement.
+- `GET /api/hello?name=`
+  Status: `400 Bad Request`
+  Body: `{"error":"name must not be blank"}`
+
+### cURL examples
+
+    curl "http://localhost:8080/api/hello"
+    curl "http://localhost:8080/api/hello?name=Jose"
+    curl "http://localhost:8080/api/hello?name="
+
+## Notes
+- The repository is designed to be incremental: small steps, frequent commits, continuous improvement.
