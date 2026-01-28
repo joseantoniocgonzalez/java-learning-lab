@@ -23,11 +23,26 @@ class HelloControllerTest {
     private HelloService helloService;
 
     @Test
-    void shouldReturnHelloMessageAsJson() throws Exception {
+    void shouldReturnDefaultHelloWhenNameMissing() throws Exception {
         given(helloService.getHello()).willReturn(new HelloResponse("Hello from Spring Boot"));
 
         mockMvc.perform(get("/api/hello"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Hello from Spring Boot"));
+    }
+
+    @Test
+    void shouldReturnPersonalizedHelloWhenNameProvided() throws Exception {
+        given(helloService.getHelloForName("Jose")).willReturn(new HelloResponse("Hello, Jose"));
+
+        mockMvc.perform(get("/api/hello").param("name", "Jose"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Hello, Jose"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenNameBlank() throws Exception {
+        mockMvc.perform(get("/api/hello").param("name", ""))
+                .andExpect(status().isBadRequest());
     }
 }

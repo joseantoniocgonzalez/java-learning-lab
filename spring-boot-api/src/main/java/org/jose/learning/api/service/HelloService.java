@@ -9,4 +9,8 @@ public class HelloService {
     public HelloResponse getHello() {
         return new HelloResponse("Hello from Spring Boot");
     }
+
+    public HelloResponse getHelloForName(String name) {
+        return new HelloResponse("Hello, " + name);
+    }
 }
