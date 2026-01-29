@@ -107,3 +107,8 @@ Base URL: `http://localhost:8080`
 
     curl -X PUT "http://localhost:8080/api/items/1" -H "Content-Type: application/json" -d '{"name":"NewName"}'
     curl -i -X DELETE "http://localhost:8080/api/items/1"
+
+## API documentation (Swagger / OpenAPI)
+
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
