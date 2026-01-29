@@ -1,5 +1,7 @@
 # spring-boot-api
 
+![CI](https://github.com/joseantoniocgonzalez/java-learning-lab/actions/workflows/ci.yml/badge.svg)
+
 Minimal Spring Boot REST API module for learning purposes.
 
 ## What it includes
