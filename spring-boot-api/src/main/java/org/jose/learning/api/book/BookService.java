@@ -35,4 +35,23 @@ public class BookService {
 
         return new BookResponse(book.getId(), book.getTitle(), book.getAuthor(), book.getYear());
     }
+
+    public BookResponse update(Long id, CreateBookRequest request) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+
+        book.setTitle(request.title());
+        book.setAuthor(request.author());
+        book.setYear(request.year());
+
+        Book saved = bookRepository.save(book);
+        return new BookResponse(saved.getId(), saved.getTitle(), saved.getAuthor(), saved.getYear());
+    }
+
+    public void delete(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+        }
+        bookRepository.deleteById(id);
+    }
 }

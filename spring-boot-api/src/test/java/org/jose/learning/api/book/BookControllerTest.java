@@ -9,8 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -84,6 +83,44 @@ class BookControllerTest {
     @Test
     void shouldReturnNotFoundWithJsonWhenMissingBook() throws Exception {
         mockMvc.perform(get("/api/books/999999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Book not found"));
+    }
+
+    @Test
+    void shouldUpdateBook() throws Exception {
+        Book saved = bookRepository.save(new Book("Dune", "Frank Herbert", 1965));
+
+        mockMvc.perform(put("/api/books/" + saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Dune Messiah\",\"author\":\"Frank Herbert\",\"year\":1969}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.title").value("Dune Messiah"))
+                .andExpect(jsonPath("$.author").value("Frank Herbert"))
+                .andExpect(jsonPath("$.year").value(1969));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingBook() throws Exception {
+        mockMvc.perform(put("/api/books/999999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"X\",\"author\":\"Y\",\"year\":2000}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Book not found"));
+    }
+
+    @Test
+    void shouldDeleteBook() throws Exception {
+        Book saved = bookRepository.save(new Book("Dune", "Frank Herbert", 1965));
+
+        mockMvc.perform(delete("/api/books/" + saved.getId()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingMissingBook() throws Exception {
+        mockMvc.perform(delete("/api/books/999999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Book not found"));
     }
