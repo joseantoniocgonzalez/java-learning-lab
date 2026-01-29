@@ -20,6 +20,11 @@ This repository includes:
 - `spring-boot-api/` — Spring Boot REST API (DTO/JSON + validation + tests).
 - `docs/` — concise notes, learning checklist, and technical decisions.
 
+## Requirements
+
+- Java 21
+- Maven
+
 ## Quick start
 
 ### Run tests
