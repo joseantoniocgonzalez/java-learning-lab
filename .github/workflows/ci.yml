@@ -22,7 +22,7 @@ jobs:
           cache: maven
 
       - name: Run tests (java-core-katas)
-        run: mvn -f java-core-katas/pom.xml test
+        run: mvn -f java-core-katas/pom.xml verify
 
       - name: Run tests (spring-boot-api)
-        run: mvn -f spring-boot-api/pom.xml test
+        run: mvn -f spring-boot-api/pom.xml verify
