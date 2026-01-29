@@ -1,25 +1,24 @@
-# Maven
+# Maven / Java
 **/target/
 *.class
-
-# Logs
+*.jar
+*.war
+*.ear
 *.log
 
-# IntelliJ IDEA
+# IDEs
 .idea/
 *.iml
-*.iws
 *.ipr
-out/
-
-# VS Code
+*.iws
 .vscode/
-
-# Eclipse
 .classpath
 .project
 .settings/
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
+
+# Misc
+*.swp
