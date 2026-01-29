@@ -67,16 +67,18 @@ class ItemControllerTest {
     }
 
     @Test
-    void shouldReturnNotFoundForMissingItem() throws Exception {
+    void shouldReturnNotFoundWithJsonWhenMissingItem() throws Exception {
         mockMvc.perform(get("/api/items/999999"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Item not found"));
     }
 
     @Test
-    void shouldReturnBadRequestWhenNameBlank() throws Exception {
+    void shouldReturnBadRequestWithJsonWhenNameBlank() throws Exception {
         mockMvc.perform(post("/api/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\"}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("name must not be blank"));
     }
 }

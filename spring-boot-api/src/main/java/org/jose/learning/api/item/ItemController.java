@@ -3,8 +3,10 @@ package org.jose.learning.api.item;
 import jakarta.validation.Valid;
 import org.jose.learning.api.item.dto.CreateItemRequest;
 import org.jose.learning.api.item.dto.ItemResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -35,9 +37,10 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemResponse> getById(@PathVariable Long id) {
-        return itemRepository.findById(id)
-                .map(i -> ResponseEntity.ok(new ItemResponse(i.getId(), i.getName())))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ItemResponse getById(@PathVariable Long id) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
+
+        return new ItemResponse(item.getId(), item.getName());
     }
 }
