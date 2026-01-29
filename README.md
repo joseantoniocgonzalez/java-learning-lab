@@ -25,6 +25,11 @@ This repository includes:
 - Java 21
 - Maven
 
+## Requirements
+
+- Java 21
+- Maven
+
 ## Quick start
 
 ### Run tests
