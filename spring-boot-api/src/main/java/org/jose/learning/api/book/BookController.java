@@ -1,0 +1,37 @@
+package org.jose.learning.api.book;
+
+import jakarta.validation.Valid;
+import org.jose.learning.api.book.dto.BookResponse;
+import org.jose.learning.api.book.dto.CreateBookRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @PostMapping
+    public ResponseEntity<BookResponse> create(@Valid @RequestBody CreateBookRequest request) {
+        BookResponse created = bookService.create(request);
+        return ResponseEntity.created(URI.create("/api/books/" + created.id())).body(created);
+    }
+
+    @GetMapping
+    public List<BookResponse> list() {
+        return bookService.list();
+    }
+
+    @GetMapping("/{id}")
+    public BookResponse getById(@PathVariable Long id) {
+        return bookService.getById(id);
+    }
+}
