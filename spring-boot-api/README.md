@@ -5,110 +5,59 @@
 Minimal Spring Boot REST API module for learning purposes.
 
 ## What it includes
-- JSON responses using DTOs
-- Basic input validation (400 Bad Request) with JSON error body
-- Global JSON error handling for validation and not found
+- JSON responses (DTOs)
+- Input validation with consistent JSON errors
 - H2 in-memory database + Spring Data JPA
-- Tests:
-  - MVC tests with `@WebMvcTest` (hello)
-  - Integration tests with `@SpringBootTest` + MockMvc (items)
+- Integration tests (MockMvc)
+- OpenAPI / Swagger UI
 
 ## Requirements
-- Java 17+
+- Java 21
 - Maven
 
-## Run tests
+## Run
+From repository root:
 
-    mvn test
+    mvn -f spring-boot-api/pom.xml test
+    mvn -f spring-boot-api/pom.xml spring-boot:run
 
-## Run the application
+Base URL:
 
-    mvn spring-boot:run
-
-Base URL: `http://localhost:8080`
+    http://localhost:8080
 
 ## Endpoints
 
 ### Hello
+- GET /api/hello
+- GET /api/hello?name=Jose
+- GET /api/hello?name=  (400)
 
-- `GET /api/hello`  
-  Response:
+### Items
+- POST /api/items
+- GET /api/items
+- GET /api/items/{id}
 
-    {"message":"Hello from Spring Boot"}
-
-- `GET /api/hello?name=Jose`  
-  Response:
-
-    {"message":"Hello, Jose"}
-
-- `GET /api/hello?name=`  
-  Status: `400 Bad Request`  
-  Body:
-
-    {"error":"name must not be blank"}
-
-### Items (CRUD)
-
-- `POST /api/items`  
-  Body:
-
-    {"name":"Item1"}
-
-  Response (201 Created):
-
-    {"id":1,"name":"Item1"}
-
-- `GET /api/items`  
-  Response:
-
-    [{"id":1,"name":"Item1"}]
-
-- `GET /api/items/{id}`  
-  Example: `GET /api/items/1`  
-  Response:
-
-    {"id":1,"name":"Item1"}
-
-- `PUT /api/items/{id}`  
-  Body:
-
-    {"name":"NewName"}
-
-  Response:
-
-    {"id":1,"name":"NewName"}
-
-- `DELETE /api/items/{id}`  
-  Response: `204 No Content`
-
-### Error responses (JSON)
-
-- Validation error (blank name)  
-  Status: `400`  
-  Body:
-
-    {"error":"name must not be blank"}
-
-- Not found (missing item)  
-  Status: `404`  
-  Body:
-
-    {"error":"Item not found"}
-
-## cURL examples
-
-    curl "http://localhost:8080/api/hello"
-    curl "http://localhost:8080/api/hello?name=Jose"
-    curl "http://localhost:8080/api/hello?name="
+Example:
 
     curl -X POST "http://localhost:8080/api/items" -H "Content-Type: application/json" -d '{"name":"Item1"}'
     curl "http://localhost:8080/api/items"
     curl "http://localhost:8080/api/items/1"
 
-    curl -X PUT "http://localhost:8080/api/items/1" -H "Content-Type: application/json" -d '{"name":"NewName"}'
-    curl -i -X DELETE "http://localhost:8080/api/items/1"
+### Books (CRUD)
+- POST /api/books
+- GET /api/books
+- GET /api/books/{id}
+- PUT /api/books/{id}
+- DELETE /api/books/{id}
+
+Examples:
+
+    curl -X POST "http://localhost:8080/api/books" -H "Content-Type: application/json" -d '{"title":"A Study in Scarlet","author":"Arthur Conan Doyle","year":1887}'
+    curl "http://localhost:8080/api/books"
+    curl "http://localhost:8080/api/books/1"
+    curl -X PUT "http://localhost:8080/api/books/1" -H "Content-Type: application/json" -d '{"title":"The Sign of the Four","author":"Arthur Conan Doyle","year":1890}'
+    curl -X DELETE "http://localhost:8080/api/books/1"
 
 ## API documentation (Swagger / OpenAPI)
-
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
 - OpenAPI JSON: http://localhost:8080/v3/api-docs
