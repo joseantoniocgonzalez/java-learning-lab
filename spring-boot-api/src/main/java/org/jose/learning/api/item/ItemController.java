@@ -3,10 +3,8 @@ package org.jose.learning.api.item;
 import jakarta.validation.Valid;
 import org.jose.learning.api.item.dto.CreateItemRequest;
 import org.jose.learning.api.item.dto.ItemResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -15,53 +13,36 @@ import java.util.List;
 @RequestMapping("/api/items")
 public class ItemController {
 
-    private final ItemRepository itemRepository;
+    private final ItemService itemService;
 
-    public ItemController(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     @PostMapping
     public ResponseEntity<ItemResponse> create(@Valid @RequestBody CreateItemRequest request) {
-        Item saved = itemRepository.save(new Item(request.name()));
-        ItemResponse response = new ItemResponse(saved.getId(), saved.getName());
-        return ResponseEntity.created(URI.create("/api/items/" + saved.getId())).body(response);
+        ItemResponse created = itemService.create(request);
+        return ResponseEntity.created(URI.create("/api/items/" + created.id())).body(created);
     }
 
     @GetMapping
     public List<ItemResponse> list() {
-        return itemRepository.findAll()
-                .stream()
-                .map(i -> new ItemResponse(i.getId(), i.getName()))
-                .toList();
+        return itemService.list();
     }
 
     @GetMapping("/{id}")
     public ItemResponse getById(@PathVariable Long id) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
-
-        return new ItemResponse(item.getId(), item.getName());
+        return itemService.getById(id);
     }
 
     @PutMapping("/{id}")
     public ItemResponse update(@PathVariable Long id, @Valid @RequestBody CreateItemRequest request) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
-
-        // Update name (simple CRUD)
-        item.setName(request.name());
-        Item saved = itemRepository.save(item);
-
-        return new ItemResponse(saved.getId(), saved.getName());
+        return itemService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!itemRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
-        }
-        itemRepository.deleteById(id);
+        itemService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
