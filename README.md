@@ -1,5 +1,7 @@
 # java-learning-lab
 
+![CI](https://github.com/joseantoniocgonzalez/java-learning-lab/actions/workflows/ci.yml/badge.svg)
+
 **java-learning-lab** is a structured Java learning and practice repository focused on **backend-oriented skills** and **software quality**.
 Work is organized by topic and validated through **automated tests (JUnit)**, reinforcing clean code habits, refactoring, and solid **object-oriented design**.
 
@@ -52,6 +54,3 @@ Base URL: `http://localhost:8080`
     curl "http://localhost:8080/api/hello"
     curl "http://localhost:8080/api/hello?name=Jose"
     curl "http://localhost:8080/api/hello?name="
-
-## Notes
-- The repository is designed to be incremental: small steps, frequent commits, continuous improvement.
