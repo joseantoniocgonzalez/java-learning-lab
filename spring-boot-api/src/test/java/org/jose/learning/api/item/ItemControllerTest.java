@@ -9,8 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -80,5 +82,56 @@ class ItemControllerTest {
                         .content("{\"name\":\"\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("name must not be blank"));
+    }
+
+    @Test
+    void shouldDeleteItemWhenExists() throws Exception {
+        Item saved = itemRepository.save(new Item("ToDelete"));
+
+        mockMvc.perform(delete("/api/items/" + saved.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/items/" + saved.getId()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Item not found"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWithJsonWhenDeletingMissingItem() throws Exception {
+        mockMvc.perform(delete("/api/items/999999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Item not found"));
+    }
+
+    @Test
+    void shouldUpdateItemWhenExists() throws Exception {
+        Item saved = itemRepository.save(new Item("OldName"));
+
+        mockMvc.perform(put("/api/items/" + saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"NewName\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.name").value("NewName"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWithJsonWhenUpdatingBlankName() throws Exception {
+        Item saved = itemRepository.save(new Item("OldName"));
+
+        mockMvc.perform(put("/api/items/" + saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("name must not be blank"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWithJsonWhenUpdatingMissingItem() throws Exception {
+        mockMvc.perform(put("/api/items/999999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"NewName\"}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Item not found"));
     }
 }

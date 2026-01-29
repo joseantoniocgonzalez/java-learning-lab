@@ -5,6 +5,7 @@ Minimal Spring Boot REST API module for learning purposes.
 ## What it includes
 - JSON responses using DTOs
 - Basic input validation (400 Bad Request) with JSON error body
+- Global JSON error handling for validation and not found
 - H2 in-memory database + Spring Data JPA
 - Tests:
   - MVC tests with `@WebMvcTest` (hello)
@@ -44,7 +45,7 @@ Base URL: `http://localhost:8080`
 
     {"error":"name must not be blank"}
 
-### Items (CRUD minimal)
+### Items (CRUD)
 
 - `POST /api/items`  
   Body:
@@ -66,8 +67,31 @@ Base URL: `http://localhost:8080`
 
     {"id":1,"name":"Item1"}
 
-- Validation: `POST /api/items` with blank name  
-  Status: `400 Bad Request`
+- `PUT /api/items/{id}`  
+  Body:
+
+    {"name":"NewName"}
+
+  Response:
+
+    {"id":1,"name":"NewName"}
+
+- `DELETE /api/items/{id}`  
+  Response: `204 No Content`
+
+### Error responses (JSON)
+
+- Validation error (blank name)  
+  Status: `400`  
+  Body:
+
+    {"error":"name must not be blank"}
+
+- Not found (missing item)  
+  Status: `404`  
+  Body:
+
+    {"error":"Item not found"}
 
 ## cURL examples
 
@@ -78,3 +102,6 @@ Base URL: `http://localhost:8080`
     curl -X POST "http://localhost:8080/api/items" -H "Content-Type: application/json" -d '{"name":"Item1"}'
     curl "http://localhost:8080/api/items"
     curl "http://localhost:8080/api/items/1"
+
+    curl -X PUT "http://localhost:8080/api/items/1" -H "Content-Type: application/json" -d '{"name":"NewName"}'
+    curl -i -X DELETE "http://localhost:8080/api/items/1"

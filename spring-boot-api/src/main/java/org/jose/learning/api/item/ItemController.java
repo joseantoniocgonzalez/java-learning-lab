@@ -43,4 +43,25 @@ public class ItemController {
 
         return new ItemResponse(item.getId(), item.getName());
     }
+
+    @PutMapping("/{id}")
+    public ItemResponse update(@PathVariable Long id, @Valid @RequestBody CreateItemRequest request) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
+
+        // Update name (simple CRUD)
+        item.setName(request.name());
+        Item saved = itemRepository.save(item);
+
+        return new ItemResponse(saved.getId(), saved.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!itemRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+        }
+        itemRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
