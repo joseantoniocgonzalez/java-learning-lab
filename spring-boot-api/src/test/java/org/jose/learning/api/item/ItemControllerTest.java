@@ -55,7 +55,8 @@ class ItemControllerTest {
 
         mockMvc.perform(get("/api/items"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
+
     }
 
     @Test

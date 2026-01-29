@@ -2,11 +2,11 @@ package org.jose.learning.api.item;
 
 import org.jose.learning.api.item.dto.CreateItemRequest;
 import org.jose.learning.api.item.dto.ItemResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class ItemService {
@@ -22,16 +22,15 @@ public class ItemService {
         return new ItemResponse(saved.getId(), saved.getName());
     }
 
-    public List<ItemResponse> list() {
-        return itemRepository.findAll()
-                .stream()
-                .map(i -> new ItemResponse(i.getId(), i.getName()))
-                .toList();
+    public Page<ItemResponse> list(Pageable pageable) {
+        return itemRepository.findAll(pageable)
+                .map(i -> new ItemResponse(i.getId(), i.getName()));
     }
 
     public ItemResponse getById(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
+
         return new ItemResponse(item.getId(), item.getName());
     }
 

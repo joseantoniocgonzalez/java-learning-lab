@@ -2,11 +2,11 @@ package org.jose.learning.api.book;
 
 import org.jose.learning.api.book.dto.BookResponse;
 import org.jose.learning.api.book.dto.CreateBookRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class BookService {
@@ -22,11 +22,9 @@ public class BookService {
         return new BookResponse(saved.getId(), saved.getTitle(), saved.getAuthor(), saved.getYear());
     }
 
-    public List<BookResponse> list() {
-        return bookRepository.findAll()
-                .stream()
-                .map(b -> new BookResponse(b.getId(), b.getTitle(), b.getAuthor(), b.getYear()))
-                .toList();
+    public Page<BookResponse> list(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(b -> new BookResponse(b.getId(), b.getTitle(), b.getAuthor(), b.getYear()));
     }
 
     public BookResponse getById(Long id) {

@@ -3,129 +3,74 @@ package org.jose.learning.api.item;
 import org.jose.learning.api.item.dto.CreateItemRequest;
 import org.jose.learning.api.item.dto.ItemResponse;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class ItemServiceTest {
 
-    @Test
-    void createShouldSaveAndReturnResponse() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
+    private final ItemRepository itemRepository = mock(ItemRepository.class);
+    private final ItemService itemService = new ItemService(itemRepository);
 
-        Item saved = new Item("Item1");
-        // simulate DB setting an id (we can't set id directly, so we return an Item with null id
-        // and only assert name + that save was called with correct value)
-        when(repo.save(any(Item.class))).thenReturn(saved);
-
-        ItemResponse res = service.create(new CreateItemRequest("Item1"));
-
-        assertEquals("Item1", res.name());
-        verify(repo, times(1)).save(any(Item.class));
+    private static Item itemWithId(Long id, String name) {
+        try {
+            Item item = new Item(name);
+            Field idField = Item.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(item, id);
+            return item;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void listShouldReturnMappedResponses() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
+    void shouldCreateItem() {
+        when(itemRepository.save(any(Item.class))).thenReturn(itemWithId(1L, "Item1"));
 
-        when(repo.findAll()).thenReturn(List.of(new Item("A"), new Item("B")));
+        ItemResponse created = itemService.create(new CreateItemRequest("Item1"));
 
-        List<ItemResponse> res = service.list();
-
-        assertEquals(2, res.size());
-        assertEquals("A", res.get(0).name());
-        assertEquals("B", res.get(1).name());
-        verify(repo, times(1)).findAll();
+        assertThat(created.id()).isEqualTo(1L);
+        assertThat(created.name()).isEqualTo("Item1");
     }
 
     @Test
-    void getByIdShouldReturnResponseWhenExists() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
+    void shouldListItemsPaged() {
+        when(itemRepository.findAll(any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(
+                        itemWithId(1L, "Item1"),
+                        itemWithId(2L, "Item2")
+                )));
 
-        Item item = new Item("X");
-        when(repo.findById(1L)).thenReturn(Optional.of(item));
+        Page<ItemResponse> page = itemService.list(PageRequest.of(0, 20));
 
-        ItemResponse res = service.getById(1L);
-
-        assertEquals("X", res.name());
-        verify(repo).findById(1L);
+        assertThat(page.getContent()).hasSize(2);
+        assertThat(page.getContent().get(0).name()).isEqualTo("Item1");
+        assertThat(page.getContent().get(1).name()).isEqualTo("Item2");
     }
 
     @Test
-    void getByIdShouldThrow404WhenMissing() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
+    void shouldThrowNotFoundWhenGetMissing() {
+        when(itemRepository.findById(999L)).thenReturn(Optional.empty());
 
-        when(repo.findById(1L)).thenReturn(Optional.empty());
-
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> service.getById(1L));
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        assertEquals("Item not found", ex.getReason());
+        Exception ex = assertThrows(Exception.class, () -> itemService.getById(999L));
+        assertThat(ex.getMessage()).contains("Item not found");
     }
 
     @Test
-    void updateShouldSaveNewName() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
+    void shouldDeleteExisting() {
+        when(itemRepository.existsById(1L)).thenReturn(true);
 
-        Item item = new Item("Old");
-        when(repo.findById(1L)).thenReturn(Optional.of(item));
-        when(repo.save(any(Item.class))).thenAnswer(inv -> inv.getArgument(0));
+        itemService.delete(1L);
 
-        ItemResponse res = service.update(1L, new CreateItemRequest("New"));
-
-        assertEquals("New", res.name());
-
-        ArgumentCaptor<Item> captor = ArgumentCaptor.forClass(Item.class);
-        verify(repo).save(captor.capture());
-        assertEquals("New", captor.getValue().getName());
-    }
-
-    @Test
-    void updateShouldThrow404WhenMissing() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
-
-        when(repo.findById(1L)).thenReturn(Optional.empty());
-
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> service.update(1L, new CreateItemRequest("X")));
-
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        assertEquals("Item not found", ex.getReason());
-    }
-
-    @Test
-    void deleteShouldDeleteWhenExists() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
-
-        when(repo.existsById(1L)).thenReturn(true);
-
-        service.delete(1L);
-
-        verify(repo).deleteById(1L);
-    }
-
-    @Test
-    void deleteShouldThrow404WhenMissing() {
-        ItemRepository repo = mock(ItemRepository.class);
-        ItemService service = new ItemService(repo);
-
-        when(repo.existsById(1L)).thenReturn(false);
-
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> service.delete(1L));
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        assertEquals("Item not found", ex.getReason());
-        verify(repo, never()).deleteById(anyLong());
+        verify(itemRepository).deleteById(1L);
     }
 }

@@ -3,11 +3,12 @@ package org.jose.learning.api.item;
 import jakarta.validation.Valid;
 import org.jose.learning.api.item.dto.CreateItemRequest;
 import org.jose.learning.api.item.dto.ItemResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -26,8 +27,8 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemResponse> list() {
-        return itemService.list();
+    public Page<ItemResponse> list(Pageable pageable) {
+        return itemService.list(pageable);
     }
 
     @GetMapping("/{id}")

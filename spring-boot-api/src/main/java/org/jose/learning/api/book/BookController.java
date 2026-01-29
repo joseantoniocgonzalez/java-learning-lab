@@ -3,11 +3,12 @@ package org.jose.learning.api.book;
 import jakarta.validation.Valid;
 import org.jose.learning.api.book.dto.BookResponse;
 import org.jose.learning.api.book.dto.CreateBookRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -26,8 +27,8 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookResponse> list() {
-        return bookService.list();
+    public Page<BookResponse> list(Pageable pageable) {
+        return bookService.list(pageable);
     }
 
     @GetMapping("/{id}")
